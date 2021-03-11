@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block title %}Search Resluts{% endblock title %}
+{% block blogactive %} active {% endblock blogactive %}
+{% block body %}
+
+
+
+
+
+
+{% comment %} <div class="container">
+<div class="p-4 p-md-5 mb-4 text-white rounded bg-dark my-1 ">
+    <div class="col-md-6 px-0">
+        <h1 class="display-4 fst-italic">Welcome to iCoder blog Home</h1>
+        <p class="lead my-3">To know more about iCoders ,click on this link Thankyou ....</p>
+        <p class="lead mb-0"><a href="/blog" class="text-white fw-bold">Continue reading...</a></p>
+    </div>
+</div> {% endcomment %}
+<div class="container">
+<h2>Search Articles by iCoders :-</h2>
+{% if allPosts|length == 0 %}
+<p>No Search Results</p>
+<p> Looks like there aren't many great matches for your search. <br>
+<p>Your search :- <b>{{query}}</b> does not match with our Document</p>
+
+
+{% endif %}
+
+
+{% for post in allPosts %}
+<div class="row mb-2">
+    <div class="col-md-15">
+      <div class="row g-0 border rounded overflow-hidden flex-md-row mb-4 shadow-sm h-md-250 position-relative">
+        <div class="col p-4 d-flex flex-column position-static">
+          <strong class="d-inline-block mb-2 text-primary">Article By:-{{post.author}}</strong>
+          <h3 class="mb-0">{{post.title}}</h3>
+          
+          <p class="card-text mb-auto my-3">{{post.content | truncatechars:400}}</p>  
+          <a href="/blog/{{post.slugfields}}" class="stretched-link" >Continue reading</a>
+        </div>
+    
+      </div>
+    </div>
+    {% endfor %}
+
+  </div>
+</div>
+<script>
+  //invoke background fadein on page load
+  $("body").hide()
+  $("body").fadeOut(1500);
+  $("body").fadeIn(1500);
+
+  </script>
+  
+
+
+{% endblock body %}

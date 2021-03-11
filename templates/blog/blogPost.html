@@ -1,0 +1,233 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}BlogPost{% endblock title %}
+{% block body %}
+{% load humanize%}
+{% load extras %}
+
+
+<style>
+    h1 {
+        color: black;
+    }
+
+    h5 {
+        color: black;
+    }
+
+    h4 {
+        color: black;
+    }
+
+    body {
+        background-color: white;
+
+    }
+
+    .turnBlue {
+        color: white;
+        background: blueviolet;
+    }
+
+    .turnRed {
+        color: white;
+        background: red;
+    }
+
+    .turnGray {
+        color: white;
+        background: gray;
+    }
+
+    .turnYellow {
+        color: white;
+        background: yellowgreen;
+    }
+
+    .turnWhite {
+        color: black;
+        background: aliceblue;
+    }
+</style>
+
+<body>
+
+
+    {% for post in post %}
+    <div class="container">
+        <h1 id="h1" align="center">{{ post.title }}</h1>
+        <h4 align="center">Article By :-{{ post.author }}</h4>
+        <h4>Time :- {{post.timeStamp}}</h4>
+        <h5>{{post.content|safe}}</h5>
+        <p>------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+        </p>
+        <div></div>
+    </div>
+    <div class="container my-5" align="center ">
+
+        <a role="button" href="/blog" class="btn btn-primary">Go to blog page</a>
+        {% comment %} <button onclick="setRandomColor()" class="btn btn-info">Change Color</button> {% endcomment %}
+    </div>
+    <div class="container">
+
+        <h3>Comments </h3>
+        <p>({{comments.count}} comments )</p>
+        {% if user.is_authenticated %}
+
+        <form action="postComment/" method="post">
+            {% csrf_token %}
+            <textarea name="comment" placeholder="Enter your comment" cols="150" rows="5"></textarea><br>
+            <input type="hidden" name="postSno" value="{{post.sno}}">
+            <input type="hidden" name="parentSno" value="">
+            <button class="btn btn-success btn-outline-success  " type="submit" value="submit">Submit</button>
+
+        </form>
+        
+            {% endif %}
+        <div class="row my-3">
+            {% comment %} <div class="col-md-2 bg-success">Image Here</div>
+            <div class="col-md-10 bg-warning">Comments Here :</div> {% endcomment %}
+            {% for comment in comments %}
+
+            <div class="col-md-1 my-2">
+                <img class="rounded mx-auto d-block w-100 " src="/static/img/user1.png" alt="oops"
+                    style="border: 2px solid rgb(113, 245, 135); ">
+            </div>
+            <div class="col-md-11 my-2"><b>{{comment.user.username}} </b><span
+                    class="badge badge-secondary">({{comment.timeStamp | naturaltime}})</span>
+                <div>{{comment.comment}}</div>
+
+            
+                
+                {% if user.is_authenticated %}
+                <button class="btn btn-outline-dark btn-sm my-2 " type="button" data-bs-toggle="collapse"
+                    data-bs-target="#replyBox{{comment.sno}}" aria-expanded="false"
+                    aria-controls="replyBox{{comment.sno}}">
+                    Reply
+                </button>
+                {% endif %}
+                <div class="collapse" id="replyBox{{comment.sno}}">
+                    <div class="card card-body my-2 ">
+                        <form action="postComment/" method="post">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <label for="comment">Post Comment</label>
+                                <input type="text" class="form-control" name="comment" placeholder="Enter Comment Here">
+                                <input type="hidden" name="parentSno" value="{{comment.sno}}">
+
+                            </div>
+                            <input type="hidden" name="postSno" value="{{post.sno}}">
+                            <button class="btn btn-success" type="submit">Submit</button>
+                        </form>
+                    </div>
+                </div>
+                 <div class="replies bg-error my-2">
+                    {% for reply in replyDict|get_val:comment.sno %}
+                        <div class="row my-2">
+                            <div class="col-md-1 my-1">
+                                <img class="rounded mx-auto d-block w-100 " src="/static/img/user1.png" alt="oops"
+                    style="border: 2px solid rgb(113, 245, 135); ">
+                            </div>
+                            <div class="col-md-11 my-3">
+                                <b>{{reply.user.username}}</b>
+                                <span class="badge badge-secondary">({{reply.timeStamp | naturaltime}})</span>
+                                <div>{{reply.comment}}</div>
+                            </div>
+                        
+                        </div>
+                        
+                    {% endfor %}
+                </div>
+
+
+
+            </div>
+
+            {% endfor %}
+        </div>
+
+
+
+        
+            <!-- </div> -->
+    </div>
+
+</body>
+{% endfor %}
+
+
+
+<script>
+
+
+    //invoke background fadein on page load
+    $("body").hide()
+    $("body").fadeOut(1500);
+    $("body").fadeIn(1500);
+
+
+    {% comment %} function getRandomColor() {
+        var letters = '0123456789ABCDEF';
+        var color = '#';
+        for (var i = 0; i < 6; i++) {
+            color += letters[Math.floor(Math.random() * 16)];
+        }
+        return color;
+    }
+
+    function setRandomColor() {
+        $("body").css("background-color", getRandomColor());
+    }
+    $('body').on('mouseover', setRandomColor()); {% endcomment %}
+
+
+// {% comment %} $('h1').click(function () { 
+//     $(this).text("I was changed");
+// });
+// $('h4').click(function () { 
+//     $(this).text("I was changed");
+// }); {% endcomment %}
+
+// $('h5').on('mouseenter',function(){
+//     $(this).toggleClass('turnRed')
+// })
+
+// $('input').eq(0).on('click',function(){
+//     $('.container').slideUp(3000);
+
+//     $('.container').slideDown(3000);
+//     // $('.container').fadeIn(2000);
+// })
+// function fade(){
+//     $('.container').fadeOut(900);
+//     window.location.href = '/blog'
+//     $("body").hide();
+//     $('.container').fadeIn(900);
+//     // DelayNode(1800);
+//     window.location.href ='/blog'
+// }
+// function fade_one(){
+//     $("body").fadeOut(5000,function(){
+//         $("body").fadeIn(2000);
+//         window.location.href = '/blog'
+
+// }
+
+// function slide(){
+//     $('.container').slideUp(2000);
+//     $('.container').slideDown(2000);
+// }
+
+// $('p').on('mouseenter',function(){
+//     $(this).toggleClass('turnWhite');
+// })
+
+// $('h4').on('mouseenter',function(){
+//     $(this).toggleClass('turnWhite');
+// })
+// {% comment %} $('h5').on('mouseenter',function(){
+//     $(this).toggleClass('turnWhite');
+// }) {% endcomment %}
+</script>
+
+{% endblock body %}
